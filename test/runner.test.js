@@ -22,7 +22,7 @@ function harness(overrides = {}) {
     timer: { schedule: (ms, fn) => scheduled.push({ ms, fn }), cancel: () => scheduled.splice(0) },
     now: () => t,
     emit: (type, payload) => events.push({ type, payload }),
-    config: { slowMs: 20000, minIntervalMs: 20000, refreshAt: 0.6, sleepFactor: 3, staleFactor: 3 },
+    config: { slowMs: 30000, minIntervalMs: 30000, refreshAt: 0.6, sleepFactor: 3, staleFactor: 3 },
   });
   return { runner, events, scheduled, api, advance: (ms) => { t += ms; }, at: () => t };
 }
@@ -85,7 +85,7 @@ test('интервал не опускается ниже минимальног
   await h.runner.start();
   await h.runner.tick();
   const last = h.scheduled[h.scheduled.length - 1];
-  assert.ok(last.ms >= 20000, 'задержка не должна опускаться ниже minIntervalMs ни при каком джиттере');
+  assert.ok(last.ms >= 30000, 'задержка не должна опускаться ниже minIntervalMs ни при каком джиттере');
 });
 
 test('длинный разрыв между тиками распознаётся как сон', async () => {
@@ -94,7 +94,7 @@ test('длинный разрыв между тиками распознаётс
   h.runner.confirmDryRun((await h.runner.dryRun()).id);
   await h.runner.start();
   await h.runner.tick();
-  h.advance(20000 * 10);
+  h.advance(30000 * 10);
   await h.runner.tick();
   const slept = h.events.find((e) => e.type === 'slept');
   assert.ok(slept, 'должно быть событие slept');
@@ -116,19 +116,19 @@ test('после трёх интервалов без успешной пров�
 
   const staleCount = () => h.events.filter((e) => e.type === 'stale').length;
 
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.equal(staleCount(), 0, 'через один интервал ещё рано для stale');
 
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.equal(staleCount(), 0, 'через два интервала ещё рано для stale');
 
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.equal(staleCount(), 1, 'через три интервала без успеха должно прийти ровно одно stale');
 
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.equal(staleCount(), 1, 'stale не должен повторяться на каждом следующем неудачном тике');
 });
@@ -167,7 +167,7 @@ test('keepImproving для bookDoctor: успешная запись перев�
   await h.runner.start();
   await h.runner.tick(); // находит слот, записывает, конвертирует цель в shiftDoctor
   assert.equal(h.runner.status().targets[0].state, 'improving');
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick(); // следующий цикл ищет уже по-новому (shiftDoctor)
 
   const last = searchCalls[searchCalls.length - 1];
@@ -195,7 +195,7 @@ test('keepImproving для bookLdp: успешная запись перевод
   h.runner.confirmDryRun((await h.runner.dryRun()).id);
   await h.runner.start();
   await h.runner.tick();
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
 
   const last = searchCalls[searchCalls.length - 1];
@@ -420,7 +420,7 @@ test('I4: relogin из search() не двигает lastOkAt вперёд', asyn
   h.runner.confirmDryRun((await h.runner.dryRun()).id);
   await h.runner.start();
   const lastOkAtAfterStart = h.runner.status().lastOkAt;
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.ok(h.events.some((e) => e.type === 'sessionLost'));
   assert.equal(h.runner.status().lastOkAt, lastOkAtAfterStart, 'lastOkAt не должен сдвигаться при relogin из search()');
@@ -435,7 +435,7 @@ test('I4: relogin из act() не двигает lastOkAt вперёд', async (
   h.runner.confirmDryRun((await h.runner.dryRun()).id);
   await h.runner.start();
   const lastOkAtAfterStart = h.runner.status().lastOkAt;
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.ok(h.events.some((e) => e.type === 'sessionLost'));
   assert.equal(h.runner.status().lastOkAt, lastOkAtAfterStart, 'lastOkAt не должен сдвигаться при relogin из act()');
@@ -499,7 +499,7 @@ test('M-1: lastCheckAt ставится только настоящей пров
   h.runner.confirmDryRun((await h.runner.dryRun()).id);
   await h.runner.start();
   assert.equal(h.runner.status().lastCheckAt, 0, 'до первой проверки времени проверки нет');
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.equal(h.runner.status().lastCheckAt, h.at());
   // Повторный старт снова означает «проверок в этом запуске ещё не было».
@@ -602,7 +602,7 @@ test('запись появилась во время работы: без ош�
   await h.runner.start();
   await h.runner.tick();
   appts.list = [ldpAppt]; // записались руками на сайте
-  h.advance(20000);
+  h.advance(30000);
   await h.runner.tick();
   assert.deepEqual(h.seen.map((s) => s.scenario), ['bookLdp', 'bookLdp', 'shiftLdp']);
   assert.ok(!h.events.some((e) => e.type === 'needDryRun' || e.type === 'targetDone'));

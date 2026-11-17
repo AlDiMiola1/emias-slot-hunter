@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ЕМИАС: охотник за слотами
 // @namespace    https://github.com/polinalamponi/emias-slot-hunter
-// @version      0.1.5
+// @version      0.1.6
 // @description  Следит за расписанием ЕМИАС и ловит освободившиеся слоты: записывает по направлению и переносит записи на более раннее время
 // @author       polinalamponi
 // @homepageURL  https://github.com/polinalamponi/emias-slot-hunter
@@ -875,7 +875,7 @@
     };
 
     const log = (msg) => emit('log', { at: now(), msg });
-    // Нижняя граница интервала — 20 секунд, чтобы не нагружать ЕМИАС, даже
+    // Нижняя граница интервала — 30 секунд, чтобы не нагружать ЕМИАС, даже
     // если когда-нибудь захочется настроить более «быстрый» slowMs.
     const interval = () => Math.max(config.minIntervalMs, config.slowMs);
 
@@ -1038,7 +1038,7 @@
       const base = interval();
       // Небольшой джиттер (±20%), чтобы не долбить ЕМИАС строго по таймеру.
       // minIntervalMs — жёсткий пол ПОСЛЕ джиттера: даже нижняя граница
-      // джиттера не должна увести фактическую задержку ниже 20 секунд.
+      // джиттера не должна увести фактическую задержку ниже 30 секунд.
       const jittered = Math.round(base * (0.8 + Math.random() * 0.4));
       timer.schedule(Math.max(config.minIntervalMs, jittered), tick);
     }
@@ -1316,11 +1316,11 @@
 (function (root) {
   'use strict';
 
-  // Нижняя граница интервала проверок — 20 секунд. Это жёсткий пол: даже
+  // Нижняя граница интервала проверок — 30 секунд. Это жёсткий пол: даже
   // если снаружи передадут config с меньшими slowMs/minIntervalMs (случайно
   // или по недосмотру), фактический интервал раннера ниже этого порога не
   // опустится — чтобы не долбить ЕМИАС слишком часто.
-  const MIN_INTERVAL_MS = 20000;
+  const MIN_INTERVAL_MS = 30000;
 
   // Раз в столько шлём в channel heartbeat работающей вкладки — см.
   // createSharedTimer ниже и Task 12c.
@@ -1427,7 +1427,7 @@
       for (const fn of listeners['*'] || []) fn({ type, payload });
     };
 
-    const safeConfig = { slowMs: 20000, minIntervalMs: 20000, refreshAt: 0.6, sleepFactor: 3, staleFactor: 3, ...config };
+    const safeConfig = { slowMs: 30000, minIntervalMs: 30000, refreshAt: 0.6, sleepFactor: 3, staleFactor: 3, ...config };
     // Жёсткий пол применяем уже ПОСЛЕ разворачивания пользовательского config —
     // runner.js берёт Math.max(minIntervalMs, slowMs), поэтому если оба поля
     // занижены одновременно, пол внутри runner.js не спасёт.
