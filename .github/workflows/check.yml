@@ -1,0 +1,26 @@
+name: Проверка
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Тесты, включая test/security.test.js: скрипт работает только на
+      # emias.info и не обращается никуда, кроме ЕМИАС.
+      - run: npm test
+      # Собранный dist/emias-slot-hunter.user.js — то, что ставят люди, —
+      # должен в точности совпадать со сборкой из исходников в этом коммите.
+      - name: dist совпадает с исходниками
+        run: |
+          npm run build
+          git diff --exit-code -- dist/ || { echo "dist/ не совпадает с исходниками: запустите npm run build и закоммитьте"; exit 1; }

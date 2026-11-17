@@ -7,8 +7,8 @@
 // @author       polinalamponi
 // @homepageURL  https://github.com/polinalamponi/emias-slot-hunter
 // @supportURL   https://github.com/polinalamponi/emias-slot-hunter/issues
-// @updateURL    https://raw.githubusercontent.com/polinalamponi/emias-slot-hunter/main/dist/emias-slot-hunter.user.js
-// @downloadURL  https://raw.githubusercontent.com/polinalamponi/emias-slot-hunter/main/dist/emias-slot-hunter.user.js
+// @updateURL    https://raw.githubusercontent.com/polinalamponi/emias-slot-hunter/release/dist/emias-slot-hunter.user.js
+// @downloadURL  https://raw.githubusercontent.com/polinalamponi/emias-slot-hunter/release/dist/emias-slot-hunter.user.js
 // @match        https://emias.info/*
 // @run-at       document-idle
 // @grant        none
