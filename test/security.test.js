@@ -10,7 +10,7 @@ const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..');
 const DIST = path.join(ROOT, 'dist/emias-slot-hunter.user.js');
-const RELEASE_URL = 'https://raw.githubusercontent.com/polinalamponi/emias-slot-hunter/release/dist/emias-slot-hunter.user.js';
+const RELEASE_URL = 'https://raw.githubusercontent.com/AlDiMiola1/emias-slot-hunter/release/dist/emias-slot-hunter.user.js';
 
 function split() {
   const src = fs.readFileSync(DIST, 'utf8');
